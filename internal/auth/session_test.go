@@ -11,6 +11,11 @@ import (
 	"github.com/dicedb/dice/internal/server/utils"
 )
 
+func TestMain(m *testing.M) {
+	config.ForceInit(&config.DiceDBConfig{})
+	m.Run()
+}
+
 func TestNewUsers(t *testing.T) {
 	users := NewUsersStore()
 	if users == nil {
@@ -83,9 +88,6 @@ func TestNewSession(t *testing.T) {
 }
 
 func TestSessionIsActive(t *testing.T) {
-	mockTime := &utils.MockClock{CurrTime: time.Now()}
-	utils.CurrentTime = mockTime
-
 	config.Config.Password = "testpassword"
 	session := NewSession()
 	if session.IsActive() {
@@ -98,10 +100,10 @@ func TestSessionIsActive(t *testing.T) {
 	}
 
 	oldLastAccessed := session.LastAccessedAt
-	mockTime.SetTime(time.Now().Add(5 * time.Millisecond))
+	time.Sleep(5 * time.Millisecond)
 
 	session.IsActive()
-	if !session.LastAccessedAt.After(oldLastAccessed) {
+	if session.LastAccessedAt <= oldLastAccessed {
 		t.Error("IsActive() should update LastAccessedAt")
 	}
 	config.Config.Password = utils.EmptyStr
