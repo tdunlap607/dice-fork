@@ -2,12 +2,12 @@ name: linter
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths:
       - '**/*.go'
 
   pull_request:
-    branches: [master]
+    branches: [main]
     paths:
       - '**/*.go'
 
